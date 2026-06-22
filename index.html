@@ -1,3 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>抽選結果照会</title>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
+body{
+  font-family:sans-serif;
+  background:#f5f7fa;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  border-radius:12px;
+  padding:20px;
+  max-width:600px;
+  margin:auto;
+  box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>抽選結果照会</h2>
+
+  <div id="result">
+    読み込み中...
+  </div>
+</div>
+
 <script>
 
 const LIFF_ID = "2010466904-ccfHyTKn";
@@ -6,55 +44,58 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzFVhaCXMYekWZOSnjpwWV7
 
 async function main(){
 
-  try{
+ try{
 
-    await liff.init({
-      liffId: LIFF_ID
-    });
+   await liff.init({
+     liffId: LIFF_ID
+   });
 
-    if(!liff.isLoggedIn()){
-      liff.login();
-      return;
-    }
+   if(!liff.isLoggedIn()){
+     liff.login();
+     return;
+   }
 
-    const profile = await liff.getProfile();
+   const profile = await liff.getProfile();
 
-    const userId = profile.userId;
+   const userId = profile.userId;
 
-    const response = await fetch(
-      `${GAS_URL}?userId=${userId}`
-    );
+   const response = await fetch(
+     `${GAS_URL}?userId=${encodeURIComponent(userId)}`
+   );
 
-    const data = await response.json();
+   const data = await response.json();
 
-    const result =
-      document.getElementById("result");
+   const result =
+     document.getElementById("result");
 
-    if(data.found){
+   if(data.found){
 
-      result.innerHTML = `
-        <p><strong>${data.name} 様</strong></p>
-        <p>${data.message}</p>
-      `;
+     result.innerHTML = `
+       <p><strong>${data.name} 様</strong></p>
+       <p>${data.message}</p>
+     `;
 
-    }else{
+   }else{
 
-      result.innerHTML =
-      "結果が見つかりません。";
+     result.innerHTML =
+     "結果が見つかりません。";
 
-    }
+   }
 
-  }catch(error){
+ }catch(error){
 
-    document.getElementById("result").innerHTML =
-      "エラー: " + error.message;
+   document.getElementById("result").innerHTML =
+     "エラー: " + error.message;
 
-    console.error(error);
+   console.error(error);
 
-  }
+ }
 
 }
 
 main();
 
 </script>
+
+</body>
+</html>
