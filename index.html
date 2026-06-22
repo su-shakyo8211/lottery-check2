@@ -1,0 +1,42 @@
+function doGet(e) {
+
+  const userId = e.parameter.userId;
+
+  const sheet =
+  SpreadsheetApp
+    .openById("スプレッドシートID")
+    .getSheetByName("results");
+
+  const data =
+  sheet.getDataRange().getValues();
+
+  for(let i=1;i<data.length;i++){
+
+    if(data[i][0] === userId){
+
+      return ContentService
+      .createTextOutput(
+        JSON.stringify({
+          found:true,
+          name:data[i][1],
+          message:data[i][2]
+        })
+      )
+      .setMimeType(
+        ContentService.MimeType.JSON
+      );
+
+    }
+  }
+
+  return ContentService
+  .createTextOutput(
+    JSON.stringify({
+      found:false
+    })
+  )
+  .setMimeType(
+    ContentService.MimeType.JSON
+  );
+
+}
